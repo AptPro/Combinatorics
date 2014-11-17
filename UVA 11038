@@ -1,0 +1,39 @@
+//UVA 11038
+#include <iostream>
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+using namespace std;
+long long m,n;
+int d[35];
+long long pre[35],suff[35],ten[35];
+long long calc(long long x) {
+	if(x<0) return 0;
+	if(!x) return 1;
+	long long _x=x;
+	int tot=0;
+	long long res=0;
+	while(_x) {
+		d[tot++]=_x%10;
+		_x/=10;
+	}
+	for(int i=tot-1;i;i--) suff[i]=x/ten[tot-i];
+	for(int i=tot-1;i;i--) pre[i]=x%ten[i];
+	for(int i=0;i<tot-1;i++) {
+		if(d[i]) {res+=ten[i]*suff[tot-1-i];}
+		else {res+=ten[i]*(suff[tot-1-i]-1)+1+pre[i];}
+	}	
+	return res+1;
+}
+int main() {
+	ten[0]=1;
+	for(int i=1;i<19;i++) ten[i]=ten[i-1]*10; 
+	while(cin>>m>>n) {
+	if(m==-1&&n==-1) break;
+		long long a1=calc(m-1);
+		long long a2=calc(n);
+		//cout<<a1<<' '<<a2<<endl;
+		cout<<a2-a1<<endl;
+	}	
+	return 0;
+}
