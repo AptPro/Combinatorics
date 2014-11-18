@@ -1,0 +1,35 @@
+//LA 3295
+#include <cstdio>
+#include <iostream>
+using namespace std;
+long long dp[1005][1005];
+long long gcd(long long a,long long b) {while(b^=a^=b^=a%=b);return a;}
+void init() {
+    for(int i=2;i<1005;i++) {
+        for(int j=2;j<1005;j++) {
+            dp[i][j]=dp[i-1][j]+dp[i][j-1]-dp[i-1][j-1]+gcd(i,j)-1;
+        }
+    }
+    for(int i=2;i<1005;i++) {
+        for(int j=2;j<1005;j++) {
+            dp[i][j]+=dp[i-1][j]+dp[i][j-1]-dp[i-1][j-1];
+        }
+    }
+}
+long long tot(long long n,long long m) {
+    long long sum=n*m*(n*m-1)/2*(n*m-2)/3;
+    long long tmp1=n*(n-1)/2*(n-2)/3*m;
+    long long tmp2=m*(m-1)/2*(m-2)/3*n;
+    return sum-tmp1-tmp2;
+}
+int main() {
+    long long n,m;
+    init();
+    int o=1;
+    while(cin>>n>>m) {
+        if(!n&&!m) break;
+        cout<<"Case "<<o++<<": ";
+        cout<<tot(n+1,m+1)-2*dp[n][m]<<endl;
+    }
+    return 0;
+}
