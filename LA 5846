@@ -1,0 +1,26 @@
+//LA 5846
+#include <cstdio>
+#include <cstring>
+int c[1005][2];
+int main() {
+	int t,n;
+	scanf("%d",&t);
+	while(t--) {
+		scanf("%d",&n);
+		int a;
+		int c0,c1;
+		int ans=0;
+		memset(c,0,sizeof(c));
+		for(int i=0;i<n;i++) {
+			for(int j=i+1;j<n;j++) {
+				scanf("%d",&a);
+				if(!a) c[i][0]++,c[j][0]++;
+				else c[i][1]++,c[j][1]++;
+			}
+		}
+		for(int i=0;i<n;i++) ans+=c[i][0]*c[i][1];
+		int tot=n*(n-1)/2*(n-2)/3;
+		printf("%d\n",tot-ans/2);
+	}
+	return 0;
+}
