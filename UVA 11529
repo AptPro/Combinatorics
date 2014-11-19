@@ -1,0 +1,57 @@
+//UVA 11529
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <utility>
+#include <algorithm>
+#include <iomanip>
+using namespace std;
+#define x first
+#define y second
+const double pi=acos(-1.0);
+pair<double,double> P[1205];
+double ang[1205<<1];
+long long C(int n,int r) {
+    if(!r) return 1;
+    if(r>n) return 0;
+    long long res=1;
+    for(int i=0;i<r;i++) {
+        res=res*(long long)(n-i)/(i+1);
+    }
+    return res;
+}
+long long solve(int N) {
+    long long res=0;
+    for(int i=0;i<N;i++) {
+        if(i) swap(P[0],P[i]);
+        for(int j=1;j<N;j++) {
+            ang[j]=atan2(P[j].y-P[0].y,P[j].x-P[0].x);
+        }
+        sort(ang+1,ang+N);
+        for(int j=1;j<N;j++) ang[N+j-1]=ang[j]+2*pi;
+        long long cnt=0;
+        int st=1;
+        for(int j=1;j<N;j++) {
+            while(ang[st]-ang[j]<pi) st++;
+            cnt+=C(st-j-1,2);
+        }
+        res+=C(N-1,3)-cnt;
+    }
+    return res;
+}
+int main() {
+    ios::sync_with_stdio(0);
+    int N;
+    int kase=1;
+    while(cin>>N) {
+        if(!N) break;
+        for(int i=0;i<N;i++) {
+            cin>>P[i].x>>P[i].y;
+        }
+        long long all=solve(N);
+        cout<<"City "<<kase++<<": ";
+        double ans=(all+0.0)/C(N,3);
+        cout<<fixed<<setprecision(2)<<ans<<endl;
+    }
+    return 0;
+}
