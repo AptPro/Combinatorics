@@ -1,0 +1,79 @@
+//LA 4064
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <cctype>
+#include <string>
+#include <cstring>
+#include <ctime>
+
+using namespace std;
+#define x first
+#define y second
+const double pi=acos(-1);
+const double eps=1e-8;
+pair<double,double> P[1500];
+double ang[1500<<1];
+long long C(int n,int r) {
+    if(!r) return 1;
+    if(r>n) return 0;
+    long long res=1;
+    for(int i=0;i<r;i++) {
+        res=res*(long long)(n-i)/(i+1);
+    }
+    return res;
+}
+inline int dcmp(double x) {
+    if(fabs(x)<eps) return 0;
+    else return x<0? -1:1;
+}
+long long solve(int N) {
+    long long ans=0;
+    for(int i=0;i<N;i++) {
+        if(i) swap(P[i],P[0]);
+        for(int j=1;j<N;j++) {
+            ang[j]=atan2(P[j].y-P[0].y,P[j].x-P[0].x);
+        }
+        sort(ang+1,ang+N);
+        for(int j=1;j<N;j++) {
+            ang[j+N-1]=ang[j]+2*pi;
+        }
+        int st=1;
+        long long cnt=0;
+        for(int j=1;j<N;j++) {
+            while(ang[st]-ang[j]-pi/2<-eps) st++; //weird to compare with -eps
+            cnt+=st-j-1;
+        }
+        ans+=C(N-1,2)-cnt;
+    }
+    return ans;
+}
+int main() {
+    ios::sync_with_stdio(0);
+    int N;
+    int kase=1;
+    while(cin>>N) {
+        if(!N) break;
+        for(int i=0;i<N;i++) cin>>P[i].x>>P[i].y;
+        long long all=solve(N);
+        cout<<"Scenario "<<kase++<<":"<<endl;
+        cout<<"There are "<<C(N,3)-all<<' '<<"sites for making valid tracks"<<endl;
+    }
+
+	return 0;
+}
