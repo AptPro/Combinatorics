@@ -1,0 +1,79 @@
+//UVA 11139
+//PRECALCULATION PROGRAM
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <algorithm>
+#include <iostream>
+using namespace std;
+typedef long long LL;
+LL gcd(LL a,LL b) {while(b^=a^=b^=a%=b);return a;}
+LL g[140][140];
+void init() {
+	for(int i=1;i<=125;i++) {g[i][0]=g[0][i]=i;}
+	for(int i=1;i<=125;i++) {
+		for(int j=1;j<=125;j++) {
+			g[i][j]=gcd(i,j);
+		}
+	}
+}
+
+LL area(int x1,int x2,int x3,int y1,int y2,int y3) {
+	return (x2-x1)*(y3-y1)-(x3-x1)*(y2-y1);
+}
+
+LL boundary(int x1,int x2,int x3,int y1,int y2,int y3) {
+	LL cnt=0;
+	cnt+=g[abs(x2-x1)][abs(y2-y1)]+g[abs(x3-x1)][abs(y3-y1)]+g[abs(x3-x2)][abs(y3-y2)];
+	return cnt;
+}
+
+LL C(LL n,LL r) {
+	if(r==0) return 1;
+	if(r>n) return 0;
+	LL res=1;
+	for(LL i=0;i<r;i++) {
+		res=res*(n-i)/(i+1);
+	}
+	return res;
+}
+int main() {
+	init();
+	for(LL n=1;n<=120;n++) {
+		LL tot=C((n+1)*(n+1),4);
+		int dx,dy;
+		for(dy=0;dy<=n;dy++) {
+			for(dx=-n;dx<=n;dx++) {
+				if(dy==0&&dx<=0) continue;
+				LL all=(LL)(n+1-dy)*(n+1-abs(dx));
+				tot-=all*(C(g[abs(dx)][dy]-1,2));
+			}
+		}
+		int x1,x2,x3,y1=0,y2,y3;
+		for(x1=0;x1<=n;x1++) {
+			for(x2=0;x2<=n;x2++) {
+				for(x3=0;x3<=n;x3++) {
+					if(x1&&x2&&x3) continue;
+					for(y2=y1;y2<=n;y2++) {
+						if(y2==y1&&x1>=x2) continue;
+						for(y3=y2;y3<=n;y3++) {
+							if(y3==y2&&x2>=x3) continue;
+							LL S=area(x1,x2,x3,y1,y2,y3);
+							if(!S) continue;
+							//cout<<x1<<' '<<x2<<' '<<x3<<' '<<y1<<' '<<y2<<' '<<y3<<endl;
+							int w=max(x1,max(x2,x3));
+							int h=max(y1,max(y2,y3));
+							LL all=(n+1-w)*(n+1-h);
+							LL B=boundary(x1,x2,x3,y1,y2,y3);
+							tot-=all*(B-3);
+							LL I=(abs(S)-B+2)/2;
+							tot+=all*I*2;
+						}
+					}
+				}
+			}
+		}
+		cout<<tot<<endl;
+	}
+	return 0;
+}
