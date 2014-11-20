@@ -1,0 +1,36 @@
+//UVA 11645
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+using namespace std;
+const long long D=(long long)1e12;
+long long a,b;
+void add(long long num) {
+	b+=num;
+	a+=b/D;
+	b%=D;
+}
+int main() {
+	long long n;
+	int kase=1;
+	while(~scanf("%lld",&n)&&n>=0) {
+		long long d=1;
+		long long _n=n;
+		a=b=0;
+		while(n>1) {
+			add((n>>2) * d);
+			if((n&3)==3) {
+				add((_n&(d-1))+1);
+			}
+			n>>=1;
+			d<<=1;
+		}
+		cout<<"Case "<<kase++<<": ";
+		if(a) {
+			printf("%lld",a);
+			printf("%012lld\n",b);
+		}
+		else printf("%lld\n",b);
+	}
+	return 0;
+}
