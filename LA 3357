@@ -1,0 +1,43 @@
+LA 3357
+#include <iostream>
+#include <algorithm>
+#include <string>
+using namespace std;
+int fib[20000],sum[20000],tot;
+
+void init() {
+    fib[1]=fib[2]=1;
+    sum[1]=1,sum[2]=2;
+    tot=3;
+    while(sum[tot-1]<900000000) {
+        fib[tot]=fib[tot-1]+fib[tot-2];
+        sum[tot]=sum[tot-1]+fib[tot];
+        tot++;
+    }
+}
+void solve(int n) {
+    string ans;
+    ans.resize(tot,'0');
+    //cout<<ans<<endl;
+    int d;
+    while(n) {
+        d=upper_bound(sum+1,sum+1+tot,n-1)-sum;
+        //cout<<d<<"!!"<<endl;
+        ans[d-1]='1';
+        n-=sum[d-1]+1;
+    }
+    for(int i=50;i>=0;i--)  if(ans[i]=='1') {for(int j=i;j>=0;j--) cout<<ans[j];break;}
+    cout<<endl;
+}
+int main() {
+    ios::sync_with_stdio(0);
+    init();
+    //cout<<sum[3]<<endl;
+    int t,n;
+    cin>>t;
+    while(t--) {
+        cin>>n;
+        solve(n);
+    }
+    return 0;
+}
