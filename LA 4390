@@ -1,0 +1,92 @@
+//LA 4390
+#include <iostream>
+#include <cstring>
+#include <cmath>
+#include <algorithm>
+#include <queue>
+#include <cstdio>
+using namespace std;
+typedef long long LL;
+const int maxn=510000;
+int vis[maxn];
+int prime[maxn],cp[maxn],np[maxn],tot;
+int p[maxn],cnt[maxn],isleaf[maxn];
+LL n,m;
+queue<int> q;
+void init() {
+    tot=0;
+    for(int i=2;i<=maxn;i++) {
+        if(!vis[i]) {prime[tot]=i;np[i]=tot++;for(int j=2*i;j<=maxn;j+=i) vis[j]=1;}
+    }
+}
+void bfs() {
+    for(int i=1;i<=n;i++) {
+        if(!isleaf[i]) q.push(i);
+    }
+    for(int i=1;i<=n;i++) cnt[i]=1;
+    while(!q.empty()) {
+        int u=q.front();q.pop();
+        if(u==1) continue;
+        cnt[p[u]]+=cnt[u],isleaf[p[u]]--;
+        if(!isleaf[p[u]]) q.push(p[u]);
+    }
+}
+
+void fac(int x,int val) {
+    if(x<=1) return;
+    if(x>=2&&!vis[x]) {cp[np[x]]+=val;return;}
+    int st=0;
+    while(x&&st<tot) {
+        if(x%prime[st]==0) {
+            while(x%prime[st]==0) {
+                cp[st]+=val;
+                x/=prime[st];
+            }
+        }
+        if(x==1) return;
+        if(x>=2&&!vis[x]) {cp[np[x]]+=val;return;}
+        st++;
+    }
+}
+LL pow_mod(int a,int b) {
+    LL res=1;
+    LL d=a;
+    while(b) {
+        if(b&1) res=(res*d)%m;
+        d=(d*d)%m;
+        b>>=1;
+    }
+    return res;
+}
+
+void solve() {
+    bfs();
+    //cout<<"!!"<<endl;
+    memset(cp,0,sizeof(cp));
+    for(int i=2;i<n;i++) fac(i,1);
+    //cout<<cp[0]<<"!!"<<cp[1]<<endl;
+    for(int i=2;i<=n;i++) {fac(cnt[i],-1);}
+    LL res=1;
+    int st=0;
+    while(res&&prime[st]<=n) {
+        if(cp[st]) {res=(res*pow_mod(prime[st],cp[st]))%m;}
+        st++;
+    }
+    printf("%lld\n",res);
+}
+int main() {
+    init();
+    //cout<<np[2]<<' '<<np[3]<<' '<<np[5]<<endl;
+    int t;
+    scanf("%d",&t);
+    while(t--) {
+        scanf("%lld%lld",&n,&m);
+        p[1]=-1;
+        memset(isleaf,0,sizeof(isleaf));
+        for(int i=2;i<=n;i++) {
+            scanf("%d",&p[i]),isleaf[p[i]]++;
+        }
+        solve();
+    }
+    return 0;
+}
