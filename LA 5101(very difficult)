@@ -1,0 +1,49 @@
+//LA 5101
+#include <iostream>
+#include <algorithm>
+#include <cstring>
+using namespace std;
+typedef long long LL;
+const long long MOD=1000000003;
+LL dp[55][55];
+LL num[55];
+int N,K;
+int main() {
+	while(cin>>N>>K&&N+K) {
+		for(int i=1;i<=N;i++) cin>>num[i];
+		LL ans=0;
+		int bit;
+		for(bit=30;bit>=0;bit--) {
+			int cnt=0;
+			memset(dp,0,sizeof(dp));
+			dp[0][0]=1;
+			for(int i=1;i<=N;i++){
+				if(num[i]&(1LL<<bit)) {
+					cnt++;
+					for(int j=0;j<=cnt;j++) {//此数此位置一
+						dp[i][j]=(dp[i-1][j]*(num[i]-(1LL<<bit)+1))%MOD;
+					}
+					dp[i][1]=(dp[i-1][0]+dp[i][1])%MOD;//这个唯一可以任选的实际上被剩下的和k唯一确定，实际上dp[i][1]等于所有C(cnt,cnt-1)组合里的数此位置1的情况总数；
+					for(int j=2;j<=cnt;j++) {//n(n>=2)以上的,(n-1)个可以任选,剩下一个任选的被确定
+						dp[i][j]=(dp[i-1][j-1]*(1LL<<bit)+dp[i][j])%MOD;
+					}
+					num[i]-=(1LL<<bit);
+				}
+				else {
+					for(int j=0;j<=cnt;j++) {
+						dp[i][j]=(dp[i-1][j]*(num[i]+1))%MOD;
+					}
+				}
+			}
+			for(int i=1;i<=cnt;i++) {
+				if(((cnt-i)&1)==((K>>bit)&1)) {
+					ans=(ans+dp[N][i])%MOD;
+				}
+			}
+			if((cnt&1)!=((K>>bit)&1)) break;
+		}
+		if(bit==-1) ans=(ans+1)%MOD;
+		cout<<ans<<endl;
+	}
+	return 0;
+}
