@@ -1,0 +1,35 @@
+//HDU 2089
+#include <iostream>
+#include <cstring>
+using namespace std;
+int d[8][2];
+int digit[8];
+int f(int idx,bool f1,bool top) {
+    if(!idx) return 1;
+    if(!top&&d[idx][f1]!=-1) return d[idx][f1];
+    int res=0;
+    int limit=top?digit[idx]:9;
+    for(int i=0;i<=limit;i++) {
+        if(i==4||(f1&&i==2)) continue;
+        res+=f(idx-1,i==6,top&&i==limit);
+    }
+    if(!top) d[idx][f1]=res;
+    return res;
+}
+int solve(int x) {
+    int cnt=0;
+    while(x) {
+        digit[++cnt]=x%10;
+        x/=10;
+    }
+    return f(cnt,0,1);
+}
+int main() {
+    int n,m;
+    memset(d,-1,sizeof(d));
+    while(cin>>n>>m) {
+        if(!n&&!m) break;
+        cout<<solve(m)-solve(n-1)<<endl;
+    }
+    return 0;
+}
