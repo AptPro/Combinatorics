@@ -1,0 +1,43 @@
+//HDU 3555
+#include <iostream>
+#include <cstring>
+#include <cstdio>
+using namespace std;
+typedef long long ll;
+ll d[30][2];
+int digit[30];
+ll ten[30];
+ll n;
+ll f(int idx,bool f1,bool top) {
+    if(!idx) return 0;
+    if(!top&&d[idx][f1]!=-1) return d[idx][f1];
+    ll res=0;
+    int limit=top?digit[idx]:9;
+    for(int i=0;i<=limit;i++) {
+        if(f1&&i==9) res+=top?n%ten[idx-1]+1:ten[idx-1];
+        else
+        res+=f(idx-1,i==4,top&&i==limit);
+    }
+    if(!top) d[idx][f1]=res;
+    return res;
+}
+ll solve(ll x) {
+    int cnt=0;
+    while(x) {
+        digit[++cnt]=x%10;
+        x/=10;
+    }
+    return f(cnt,0,1);
+}
+int main() {
+    int t;
+    cin>>t;
+    ten[0]=1;
+    for(int i=1;i<=20;i++) ten[i]=ten[i-1]*10;
+    memset(d,-1,sizeof(d));
+    while(t--) {
+        scanf("%I64d",&n);
+        printf("%I64d\n",solve(n));
+    }
+    return 0;
+}
